@@ -1,0 +1,45 @@
+Caching Proxy Server
+
+Кэширующий HTTP-прокси сервер на Go с Redis-кэшированием. 
+Перенаправляет запросы на целевой сервер и кэширует ответы для последующих запросов.
+
+1. ЗАПУСК СЕРВЕРА 
+
+1.1 Стандартный запуск
+# С использованием Docker Compose 
+docker-compose up --build
+
+# С указанием env-файла (рекомендуется) либо указывать данные явно
+docker-compose --env-file docker.env up
+
+1.2 Запуск с очисткой кэша
+# Для Linux/Mac/WSL (Bash):
+CLEAR_CACHE=true docker-compose up
+
+#Для Windows (PowerShell):
+$env:CLEAR_CACHE="true"; docker-compose --env-file docker.env up
+
+1.3 Запуск с кастомными параметрами
+# Windows PowerShell
+$env:CLEAR_CACHE="true"; $env:PROXY_PORT="8080"; $env:TARGET_URL="https://jsonplaceholder.typicode.com"; docker-compose up
+
+
+2 Создание запроса
+Запрос создается в отдельном терминале.
+
+curl http://localhost:(указанный порт)/(путь)
+
+Примеры запросов для адресса https://dummyjson.com с запущеным прокси-сервером на 3000 порте:
+
+curl http://localhost:3000/products/1
+curl http://localhost:3000/products?limit=5
+
+Быстрая проверка работоспособности, используя example.env 
+
+docker-compose --env-file example.env up
+
+<-- В другом терминале -->
+
+curl http://localhost:3030/products/1 
+# В первый раз должен вывести X-Cache: MISS, в последующем таком же запросе X-Cache: HIT
+
